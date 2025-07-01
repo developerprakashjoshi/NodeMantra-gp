@@ -17,4 +17,49 @@ To enhance productivity, NodeMantra comes bundled with a range of useful utiliti
 
 NodeMantra not only offers a comprehensive framework for web applications but also includes Meilisearch as its built-in search engine, enabling efficient and accurate search functionality.
 
+## Quick Start
+
+### Create a New Project
+
+The easiest way to create a new NodeMantra project is using our CLI tool:
+
+```bash
+npx create-nodemantra my-app
+cd my-app
+npm install
+npm run dev
+```
+
+### Manual Installation
+
+```bash
+npm install nodemantra-core
+```
+
+```typescript
+import NodeMantra from 'nodemantra-core';
+
+const app = new NodeMantra(3000, 'localhost');
+app.initialize().then(() => {
+  app.start();
+});
+```
+
+## Documentation
+
+- 📖 [Complete Usage Guide](USAGE.md) - Detailed guide with examples
+- 🚀 [NPM Package](https://www.npmjs.com/package/nodemantra-core)
+- 📚 [GitHub Repository](https://github.com/developerprakashjoshi/nodemantra-core)
+
+## Features
+
+- ✅ **TypeScript Support** - Built with TypeScript for type safety
+- ✅ **Modular Architecture** - MVC pattern with controllers, services, and models
+- ✅ **Database Integration** - TypeORM support for multiple databases
+- ✅ **Middleware System** - Built-in and custom middleware support
+- ✅ **Error Handling** - Centralized error management
+- ✅ **File Upload** - Built-in file upload middleware
+- ✅ **Search Integration** - MeiliSearch integration
+- ✅ **CLI Tool** - Quick project scaffolding
+
 Overall, NodeMantra is a feature-rich and developer-friendly framework that combines the power of Node.js with the benefits of TypeScript. It empowers developers to build scalable, maintainable, and high-performance web applications with ease. Whether you're building a small REST API or a complex web application, NodeMantra provides the tools and structure needed to deliver reliable and efficient solutions.# Updated Git configuration
