@@ -63,7 +63,8 @@ function createPackageJson(projectName) {
     "dotenv": "^16.0.3",
     "typeorm": "^0.3.15",
     "reflect-metadata": "^0.1.13",
-    "ejs": "^3.1.9"
+    "ejs": "^3.1.9",
+    "commander": "^11.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.17.6",
@@ -92,7 +93,17 @@ function createTsConfig() {
     "declaration": true,
     "sourceMap": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@models/*": ["models/*"],
+      "@services/*": ["services/*"],
+      "@controllers/*": ["controllers/*"],
+      "@routes/*": ["routes/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@config/*": ["config/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
@@ -194,6 +205,41 @@ export class User extends BaseModel {
 `;
 }
 
+function createBaseService() {
+  return `import { Repository } from 'typeorm';
+
+export default class BaseService {
+  protected repository: Repository<any>;
+
+  constructor(repository: Repository<any>) {
+    this.repository = repository;
+  }
+
+  async findAll() {
+    return await this.repository.find();
+  }
+
+  async findById(id: number) {
+    return await this.repository.findOne({ where: { id } });
+  }
+
+  async create(data: any) {
+    const entity = this.repository.create(data);
+    return await this.repository.save(entity);
+  }
+
+  async update(id: number, data: any) {
+    await this.repository.update(id, data);
+    return await this.findById(id);
+  }
+
+  async delete(id: number) {
+    return await this.repository.delete(id);
+  }
+}
+`;
+}
+
 function createUserService() {
   return `import BaseService from '@services/base.service';
 import { AppDataSource } from 'nodemantra-core';
@@ -208,6 +254,73 @@ export class UserService extends BaseService {
 `;
 }
 
+function createBaseController() {
+  return `import { Request, Response } from 'express';
+import { Response as ApiResponse } from 'nodemantra-core';
+
+export default class BaseController {
+  protected service: any;
+
+  constructor(service: any) {
+    this.service = service;
+  }
+
+  async getAll(req: Request, res: Response) {
+    try {
+      const data = await this.service.findAll();
+      return ApiResponse.success(res, data, 'Data retrieved successfully');
+    } catch (error) {
+      return ApiResponse.error(res, error.message);
+    }
+  }
+
+  async getById(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id);
+      const data = await this.service.findById(id);
+      
+      if (!data) {
+        return ApiResponse.notFound(res, 'Data not found');
+      }
+      
+      return ApiResponse.success(res, data, 'Data retrieved successfully');
+    } catch (error) {
+      return ApiResponse.error(res, error.message);
+    }
+  }
+
+  async create(req: Request, res: Response) {
+    try {
+      const data = await this.service.create(req.body);
+      return ApiResponse.created(res, data, 'Data created successfully');
+    } catch (error) {
+      return ApiResponse.error(res, error.message);
+    }
+  }
+
+  async update(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id);
+      const data = await this.service.update(id, req.body);
+      return ApiResponse.success(res, data, 'Data updated successfully');
+    } catch (error) {
+      return ApiResponse.error(res, error.message);
+    }
+  }
+
+  async delete(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id);
+      await this.service.delete(id);
+      return ApiResponse.success(res, null, 'Data deleted successfully');
+    } catch (error) {
+      return ApiResponse.error(res, error.message);
+    }
+  }
+}
+`;
+}
+
 function createUserController() {
   return `import BaseController from '@controllers/base.controller';
 import { UserService } from '@services/user.service';
@@ -215,6 +328,34 @@ import { UserService } from '@services/user.service';
 export class UserController extends BaseController {
   constructor(private userService: UserService) {
     super(userService);
+  }
+}
+`;
+}
+
+function createBaseRoutes() {
+  return `import { Router } from 'express';
+
+export default class BaseRoutes {
+  protected router: Router;
+  protected controller: any;
+
+  constructor(controller: any) {
+    this.router = Router();
+    this.controller = controller;
+    this.setupRoutes();
+  }
+
+  protected setupRoutes() {
+    this.router.get('/', this.controller.getAll.bind(this.controller));
+    this.router.get('/:id', this.controller.getById.bind(this.controller));
+    this.router.post('/', this.controller.create.bind(this.controller));
+    this.router.put('/:id', this.controller.update.bind(this.controller));
+    this.router.delete('/:id', this.controller.delete.bind(this.controller));
+  }
+
+  getRouter() {
+    return this.router;
   }
 }
 `;
@@ -322,6 +463,18 @@ src/
 ├── config/          # Configuration files
 └── index.ts         # Application entry point
 \`\`\`
+
+## Path Aliases
+
+The project uses TypeScript path aliases for cleaner imports:
+
+- \`@/*\` - Points to src directory
+- \`@models/*\` - Points to src/models
+- \`@services/*\` - Points to src/services
+- \`@controllers/*\` - Points to src/controllers
+- \`@routes/*\` - Points to src/routes
+- \`@middlewares/*\` - Points to src/middlewares
+- \`@config/*\` - Points to src/config
 
 ## Documentation
 
@@ -446,52 +599,184 @@ function createNodemonConfig() {
 }`;
 }
 
-function copyArtisanFiles(projectPath) {
-  const artisanDir = path.join(projectPath, '.node_mantra', 'sdk');
-  
-  // Create directories
-  createDirectory(path.join(artisanDir, 'template', 'app', 'controllers'));
-  createDirectory(path.join(artisanDir, 'template', 'app', 'models'));
-  createDirectory(path.join(artisanDir, 'template', 'app', 'services'));
-  createDirectory(path.join(artisanDir, 'template', 'app', 'validators'));
-  createDirectory(path.join(artisanDir, 'template', 'app', 'middlewares'));
-  createDirectory(path.join(artisanDir, 'template', 'routes'));
-  createDirectory(path.join(artisanDir, 'template', 'tests'));
-  createDirectory(path.join(artisanDir, 'template', 'database', 'seeders'));
-  createDirectory(path.join(artisanDir, 'template', 'database', 'migrations'));
-  createDirectory(path.join(artisanDir, 'util'));
+function createArtisanFile() {
+  return `#!/usr/bin/env node
 
-  // Copy artisan.ts
-  const artisanContent = fs.readFileSync(path.join(__dirname, '../.node_mantra/sdk/artisan.ts'), 'utf8');
-  createFile(path.join(artisanDir, 'artisan.ts'), artisanContent);
+import { Command } from 'commander';
+import * as fs from 'fs';
+import * as path from 'path';
 
-  // Copy String.ts utility
-  const stringUtilContent = fs.readFileSync(path.join(__dirname, '../.node_mantra/sdk/util/String.ts'), 'utf8');
-  createFile(path.join(artisanDir, 'util', 'String.ts'), stringUtilContent);
+const program = new Command();
 
-  // Copy template files
-  const templateFiles = [
-    { src: path.join(__dirname, '../.node_mantra/sdk/template/app/controllers/starter.controller.ejs'), dest: 'template/app/controllers/starter.controller.ejs' },
-    { src: path.join(__dirname, '../.node_mantra/sdk/template/app/models/starter.schema.ejs'), dest: 'template/app/models/starter.schema.ejs' },
-    { src: path.join(__dirname, '../.node_mantra/sdk/template/app/services/starter.service.ejs'), dest: 'template/app/services/starter.service.ejs' },
-    { src: path.join(__dirname, '../.node_mantra/sdk/template/app/validators/starter.validator.ejs'), dest: 'template/app/validators/starter.validator.ejs' },
-    { src: path.join(__dirname, '../.node_mantra/sdk/template/routes/starter.route.ejs'), dest: 'template/routes/starter.route.ejs' },
-    { src: path.join(__dirname, '../.node_mantra/sdk/template/app/middlewares/starter.middleware.ejs'), dest: 'template/app/middlewares/starter.middleware.ejs' },
-    { src: path.join(__dirname, '../.node_mantra/sdk/template/tests/starter.test.ejs'), dest: 'template/tests/starter.test.ejs' },
-    { src: path.join(__dirname, '../.node_mantra/sdk/template/database/seeders/starter.seeder.ejs'), dest: 'template/database/seeders/starter.seeder.ejs' },
-    { src: path.join(__dirname, '../.node_mantra/sdk/template/database/migrations/starter.migration.ejs'), dest: 'template/database/migrations/starter.migration.ejs' }
-  ];
+program
+  .name('artisan')
+  .description('NodeMantra Artisan CLI')
+  .version('1.0.0');
 
-  templateFiles.forEach(file => {
-    try {
-      const content = fs.readFileSync(file.src, 'utf8');
-      createFile(path.join(artisanDir, file.dest), content);
-    } catch (error) {
-      log(`⚠️  Warning: Could not copy template file ${file.src}`, 'yellow');
-    }
+// List command
+program
+  .command('list')
+  .description('List all available commands')
+  .action(() => {
+    console.log('Available commands:');
+    console.log('  make:controller <name>    Create a new controller');
+    console.log('  make:model <name>         Create a new model');
+    console.log('  make:service <name>       Create a new service');
+    console.log('  make:middleware <name>    Create a new middleware');
+    console.log('  make:resource <name>      Create a complete resource');
+    console.log('  serve                     Start development server');
   });
 
-  log('✅ Artisan CLI files copied successfully', 'green');
+// Make controller command
+program
+  .command('make:controller <name>')
+  .description('Create a new controller')
+  .action((name) => {
+    const controllerContent = 'import BaseController from \\'@controllers/base.controller\\';\\n' +
+      'import { ' + name + 'Service } from \\'@services/' + name.toLowerCase() + '.service\\';\\n\\n' +
+      'export class ' + name + 'Controller extends BaseController {\\n' +
+      '  constructor(private ' + name.toLowerCase() + 'Service: ' + name + 'Service) {\\n' +
+      '    super(' + name.toLowerCase() + 'Service);\\n' +
+      '  }\\n' +
+      '}\\n';
+
+    const controllerPath = path.join(process.cwd(), 'src', 'controllers', name.toLowerCase() + '.controller.ts');
+    fs.writeFileSync(controllerPath, controllerContent);
+    console.log('✅ Controller created: ' + controllerPath);
+  });
+
+// Make model command
+program
+  .command('make:model <name>')
+  .description('Create a new model')
+  .action((name) => {
+    const modelContent = 'import { Entity, Column } from \\'typeorm\\';\\n' +
+      'import BaseModel from \\'@models/base.model\\';\\n\\n' +
+      '@Entity(\\'' + name.toLowerCase() + 's\\')\\n' +
+      'export class ' + name + ' extends BaseModel {\\n' +
+      '  @Column()\\n' +
+      '  name: string;\\n\\n' +
+      '  @Column({ nullable: true })\\n' +
+      '  description: string;\\n' +
+      '}\\n';
+
+    const modelPath = path.join(process.cwd(), 'src', 'models', name.toLowerCase() + '.model.ts');
+    fs.writeFileSync(modelPath, modelContent);
+    console.log('✅ Model created: ' + modelPath);
+  });
+
+// Make service command
+program
+  .command('make:service <name>')
+  .description('Create a new service')
+  .action((name) => {
+    const serviceContent = 'import BaseService from \\'@services/base.service\\';\\n' +
+      'import { AppDataSource } from \\'nodemantra-core\\';\\n' +
+      'import { ' + name + ' } from \\'@models/' + name.toLowerCase() + '.model\\';\\n\\n' +
+      'export class ' + name + 'Service extends BaseService {\\n' +
+      '  constructor() {\\n' +
+      '    const repository = AppDataSource.getRepository(' + name + ');\\n' +
+      '    super(repository);\\n' +
+      '  }\\n' +
+      '}\\n';
+
+    const servicePath = path.join(process.cwd(), 'src', 'services', name.toLowerCase() + '.service.ts');
+    fs.writeFileSync(servicePath, serviceContent);
+    console.log('✅ Service created: ' + servicePath);
+  });
+
+// Make middleware command
+program
+  .command('make:middleware <name>')
+  .description('Create a new middleware')
+  .action((name) => {
+    const middlewareContent = 'import { Request, Response, NextFunction } from \\'express\\';\\n\\n' +
+      'export const ' + name + 'Middleware = (req: Request, res: Response, next: NextFunction) => {\\n' +
+      '  // Add your middleware logic here\\n' +
+      '  console.log(\\'' + name + ' middleware executed\\');\\n' +
+      '  next();\\n' +
+      '};\\n';
+
+    const middlewarePath = path.join(process.cwd(), 'src', 'middlewares', name.toLowerCase() + '.middleware.ts');
+    fs.writeFileSync(middlewarePath, middlewareContent);
+    console.log('✅ Middleware created: ' + middlewarePath);
+  });
+
+// Make resource command
+program
+  .command('make:resource <name>')
+  .description('Create a complete resource (controller, model, service, routes)')
+  .action((name) => {
+    // Create controller
+    const controllerContent = 'import BaseController from \\'@controllers/base.controller\\';\\n' +
+      'import { ' + name + 'Service } from \\'@services/' + name.toLowerCase() + '.service\\';\\n\\n' +
+      'export class ' + name + 'Controller extends BaseController {\\n' +
+      '  constructor(private ' + name.toLowerCase() + 'Service: ' + name + 'Service) {\\n' +
+      '    super(' + name.toLowerCase() + 'Service);\\n' +
+      '  }\\n' +
+      '}\\n';
+
+    const controllerPath = path.join(process.cwd(), 'src', 'controllers', name.toLowerCase() + '.controller.ts');
+    fs.writeFileSync(controllerPath, controllerContent);
+
+    // Create model
+    const modelContent = 'import { Entity, Column } from \\'typeorm\\';\\n' +
+      'import BaseModel from \\'@models/base.model\\';\\n\\n' +
+      '@Entity(\\'' + name.toLowerCase() + 's\\')\\n' +
+      'export class ' + name + ' extends BaseModel {\\n' +
+      '  @Column()\\n' +
+      '  name: string;\\n\\n' +
+      '  @Column({ nullable: true })\\n' +
+      '  description: string;\\n' +
+      '}\\n';
+
+    const modelPath = path.join(process.cwd(), 'src', 'models', name.toLowerCase() + '.model.ts');
+    fs.writeFileSync(modelPath, modelContent);
+
+    // Create service
+    const serviceContent = 'import BaseService from \\'@services/base.service\\';\\n' +
+      'import { AppDataSource } from \\'nodemantra-core\\';\\n' +
+      'import { ' + name + ' } from \\'@models/' + name.toLowerCase() + '.model\\';\\n\\n' +
+      'export class ' + name + 'Service extends BaseService {\\n' +
+      '  constructor() {\\n' +
+      '    const repository = AppDataSource.getRepository(' + name + ');\\n' +
+      '    super(repository);\\n' +
+      '  }\\n' +
+      '}\\n';
+
+    const servicePath = path.join(process.cwd(), 'src', 'services', name.toLowerCase() + '.service.ts');
+    fs.writeFileSync(servicePath, serviceContent);
+
+    // Create routes
+    const routesContent = 'import BaseRoutes from \\'@routes/base.routes\\';\\n' +
+      'import { ' + name + 'Controller } from \\'@controllers/' + name.toLowerCase() + '.controller\\';\\n' +
+      'import { ' + name + 'Service } from \\'@services/' + name.toLowerCase() + '.service\\';\\n\\n' +
+      'const ' + name.toLowerCase() + 'Service = new ' + name + 'Service();\\n' +
+      'const ' + name.toLowerCase() + 'Controller = new ' + name + 'Controller(' + name.toLowerCase() + 'Service);\\n' +
+      'const ' + name.toLowerCase() + 'Routes = new BaseRoutes(' + name.toLowerCase() + 'Controller);\\n\\n' +
+      'export default ' + name.toLowerCase() + 'Routes.getRouter();\\n';
+
+    const routesPath = path.join(process.cwd(), 'src', 'routes', name.toLowerCase() + '.routes.ts');
+    fs.writeFileSync(routesPath, routesContent);
+
+    console.log('✅ Resource created for ' + name + ':');
+    console.log('   - Controller: ' + controllerPath);
+    console.log('   - Model: ' + modelPath);
+    console.log('   - Service: ' + servicePath);
+    console.log('   - Routes: ' + routesPath);
+  });
+
+// Serve command
+program
+  .command('serve')
+  .description('Start development server')
+  .action(() => {
+    console.log('🚀 Starting development server...');
+    const { execSync } = require('child_process');
+    execSync('npm run dev', { stdio: 'inherit' });
+  });
+
+program.parse();`;
 }
 
 function main() {
@@ -538,18 +823,25 @@ function main() {
   createFile(path.join(projectPath, 'src/index.ts'), createMainIndex());
   createFile(path.join(projectPath, 'src/models/base.model.ts'), createBaseModel());
   createFile(path.join(projectPath, 'src/models/user.model.ts'), createUserModel());
+  createFile(path.join(projectPath, 'src/services/base.service.ts'), createBaseService());
   createFile(path.join(projectPath, 'src/services/user.service.ts'), createUserService());
+  createFile(path.join(projectPath, 'src/controllers/base.controller.ts'), createBaseController());
   createFile(path.join(projectPath, 'src/controllers/user.controller.ts'), createUserController());
+  createFile(path.join(projectPath, 'src/routes/base.routes.ts'), createBaseRoutes());
   createFile(path.join(projectPath, 'src/routes/user.routes.ts'), createUserRoutes());
 
-  // Copy Artisan CLI files
-  copyArtisanFiles(projectPath);
+  // Create Artisan CLI
+  createDirectory(path.join(projectPath, '.node_mantra', 'sdk'));
+  createFile(path.join(projectPath, '.node_mantra', 'sdk', 'artisan.ts'), createArtisanFile());
 
   log('\n✅ Project created successfully!', 'green');
   log('\n📋 Next steps:', 'blue');
   log(`  cd ${projectName}`, 'yellow');
   log('  npm install', 'yellow');
   log('  npm run dev', 'yellow');
+  log('\n🛠️  Artisan Commands:', 'blue');
+  log('  npm run artisan list', 'yellow');
+  log('  npm run artisan make:resource Post', 'yellow');
   log('\n📚 Documentation:', 'blue');
   log('  https://github.com/developerprakashjoshi/nodemantra-core', 'yellow');
   log('  https://www.npmjs.com/package/nodemantra-core', 'yellow');
