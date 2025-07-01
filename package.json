@@ -43,12 +43,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/developerprakashjoshi/NodeMantra-gp.git"
+    "url": "https://github.com/developerprakashjoshi/nodemantra-core.git"
   },
   "bugs": {
-    "url": "https://github.com/developerprakashjoshi/NodeMantra-gp/issues"
+    "url": "https://github.com/developerprakashjoshi/nodemantra-core/issues"
   },
-  "homepage": "https://github.com/developerprakashjoshi/NodeMantra-gp#readme",
+  "homepage": "https://github.com/developerprakashjoshi/nodemantra-core#readme",
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=6.0.0"
