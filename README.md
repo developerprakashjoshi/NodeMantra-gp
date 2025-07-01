@@ -17,4 +17,4 @@ To enhance productivity, NodeMantra comes bundled with a range of useful utiliti
 
 NodeMantra not only offers a comprehensive framework for web applications but also includes Meilisearch as its built-in search engine, enabling efficient and accurate search functionality.
 
-Overall, NodeMantra is a feature-rich and developer-friendly framework that combines the power of Node.js with the benefits of TypeScript. It empowers developers to build scalable, maintainable, and high-performance web applications with ease. Whether you're building a small REST API or a complex web application, NodeMantra provides the tools and structure needed to deliver reliable and efficient solutions.
+Overall, NodeMantra is a feature-rich and developer-friendly framework that combines the power of Node.js with the benefits of TypeScript. It empowers developers to build scalable, maintainable, and high-performance web applications with ease. Whether you're building a small REST API or a complex web application, NodeMantra provides the tools and structure needed to deliver reliable and efficient solutions.# Updated Git configuration
