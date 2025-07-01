@@ -1,6 +1,6 @@
 {
   "name": "nodemantra-core",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "A powerful and versatile Node.js framework for building robust web applications with TypeScript, featuring modular architecture, middleware system, database integration, and built-in search capabilities.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
