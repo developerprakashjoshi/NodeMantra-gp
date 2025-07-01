@@ -50,7 +50,8 @@ function createPackageJson(projectName) {
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "mocha --require ts-node/register 'src/tests/**/*.test.ts'"
+    "test": "mocha --require ts-node/register 'src/tests/**/*.test.ts'",
+    "artisan": "ts-node ./.node_mantra/sdk/artisan.ts"
   },
   "keywords": ["nodemantra", "typescript", "nodejs", "framework"],
   "author": "",
@@ -61,7 +62,8 @@ function createPackageJson(projectName) {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "typeorm": "^0.3.15",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "ejs": "^3.1.9"
   },
   "devDependencies": {
     "@types/node": "^18.17.6",
@@ -119,7 +121,6 @@ CORS_ORIGIN=http://localhost:3000
 
 function createMainIndex() {
   return `import NodeMantra from 'nodemantra-core';
-import { AppDataSource } from 'nodemantra-core';
 import { errorHandler, notFound } from 'nodemantra-core';
 import dotenv from 'dotenv';
 
@@ -127,17 +128,13 @@ dotenv.config();
 
 async function bootstrap() {
   try {
-    // Initialize database connection
-    await AppDataSource.initialize();
-    console.log('✅ Database connected successfully');
-
     // Create NodeMantra application
     const app = new NodeMantra(
       parseInt(process.env.PORT || '3000'),
       process.env.HOST || 'localhost'
     );
 
-    // Initialize the application
+    // Initialize the application (this will handle database connection)
     const expressApp = await app.initialize();
     
     // Add your custom routes here
@@ -181,7 +178,7 @@ export default BaseModel;
 
 function createUserModel() {
   return `import { Entity, Column } from 'typeorm';
-import { BaseModel } from './base.model';
+import BaseModel from '@models/base.model';
 
 @Entity('users')
 export class User extends BaseModel {
@@ -198,9 +195,9 @@ export class User extends BaseModel {
 }
 
 function createUserService() {
-  return `import { BaseService } from 'nodemantra-core';
+  return `import BaseService from '@services/base.service';
 import { AppDataSource } from 'nodemantra-core';
-import { User } from '../models/user.model';
+import { User } from '@models/user.model';
 
 export class UserService extends BaseService {
   constructor() {
@@ -212,9 +209,8 @@ export class UserService extends BaseService {
 }
 
 function createUserController() {
-  return `import { BaseController } from 'nodemantra-core';
-import { Request, Response } from 'express';
-import { UserService } from '../services/user.service';
+  return `import BaseController from '@controllers/base.controller';
+import { UserService } from '@services/user.service';
 
 export class UserController extends BaseController {
   constructor(private userService: UserService) {
@@ -225,9 +221,9 @@ export class UserController extends BaseController {
 }
 
 function createUserRoutes() {
-  return `import { BaseRoutes } from 'nodemantra-core';
-import { UserController } from '../controllers/user.controller';
-import { UserService } from '../services/user.service';
+  return `import BaseRoutes from '@routes/base.routes';
+import { UserController } from '@controllers/user.controller';
+import { UserService } from '@services/user.service';
 
 const userService = new UserService();
 const userController = new UserController(userService);
@@ -271,6 +267,32 @@ npm start
 \`\`\`bash
 npm test
 \`\`\`
+
+## Artisan Commands
+
+NodeMantra includes a powerful command-line interface inspired by Laravel's Artisan:
+
+\`\`\`bash
+# List all available commands
+npm run artisan list
+
+# Create a complete resource (controller, model, service, validator, route)
+npm run artisan make:resource User
+
+# Create individual components
+npm run artisan make:controller Post
+npm run artisan make:model Category
+npm run artisan make:middleware Auth
+
+# Database operations
+npm run artisan db:migrate
+npm run artisan db:seed
+
+# Start development server
+npm run artisan serve
+\`\`\`
+
+For a complete list of commands, see the [Artisan Commands documentation](https://github.com/developerprakashjoshi/nodemantra-core/blob/main/ARTISAN.md).
 
 ## Environment Variables
 
@@ -424,6 +446,54 @@ function createNodemonConfig() {
 }`;
 }
 
+function copyArtisanFiles(projectPath) {
+  const artisanDir = path.join(projectPath, '.node_mantra', 'sdk');
+  
+  // Create directories
+  createDirectory(path.join(artisanDir, 'template', 'app', 'controllers'));
+  createDirectory(path.join(artisanDir, 'template', 'app', 'models'));
+  createDirectory(path.join(artisanDir, 'template', 'app', 'services'));
+  createDirectory(path.join(artisanDir, 'template', 'app', 'validators'));
+  createDirectory(path.join(artisanDir, 'template', 'app', 'middlewares'));
+  createDirectory(path.join(artisanDir, 'template', 'routes'));
+  createDirectory(path.join(artisanDir, 'template', 'tests'));
+  createDirectory(path.join(artisanDir, 'template', 'database', 'seeders'));
+  createDirectory(path.join(artisanDir, 'template', 'database', 'migrations'));
+  createDirectory(path.join(artisanDir, 'util'));
+
+  // Copy artisan.ts
+  const artisanContent = fs.readFileSync('./.node_mantra/sdk/artisan.ts', 'utf8');
+  createFile(path.join(artisanDir, 'artisan.ts'), artisanContent);
+
+  // Copy String.ts utility
+  const stringUtilContent = fs.readFileSync('./.node_mantra/sdk/util/String.ts', 'utf8');
+  createFile(path.join(artisanDir, 'util', 'String.ts'), stringUtilContent);
+
+  // Copy template files
+  const templateFiles = [
+    { src: './.node_mantra/sdk/template/app/controllers/starter.controller.ejs', dest: 'template/app/controllers/starter.controller.ejs' },
+    { src: './.node_mantra/sdk/template/app/models/starter.schema.ejs', dest: 'template/app/models/starter.schema.ejs' },
+    { src: './.node_mantra/sdk/template/app/services/starter.service.ejs', dest: 'template/app/services/starter.service.ejs' },
+    { src: './.node_mantra/sdk/template/app/validators/starter.validator.ejs', dest: 'template/app/validators/starter.validator.ejs' },
+    { src: './.node_mantra/sdk/template/routes/starter.route.ejs', dest: 'template/routes/starter.route.ejs' },
+    { src: './.node_mantra/sdk/template/app/middlewares/starter.middleware.ejs', dest: 'template/app/middlewares/starter.middleware.ejs' },
+    { src: './.node_mantra/sdk/template/tests/starter.test.ejs', dest: 'template/tests/starter.test.ejs' },
+    { src: './.node_mantra/sdk/template/database/seeders/starter.seeder.ejs', dest: 'template/database/seeders/starter.seeder.ejs' },
+    { src: './.node_mantra/sdk/template/database/migrations/starter.migration.ejs', dest: 'template/database/migrations/starter.migration.ejs' }
+  ];
+
+  templateFiles.forEach(file => {
+    try {
+      const content = fs.readFileSync(file.src, 'utf8');
+      createFile(path.join(artisanDir, file.dest), content);
+    } catch (error) {
+      log(`⚠️  Warning: Could not copy template file ${file.src}`, 'yellow');
+    }
+  });
+
+  log('✅ Artisan CLI files copied successfully', 'green');
+}
+
 function main() {
   const projectName = getProjectName();
   const projectPath = path.resolve(process.cwd(), projectName);
@@ -471,6 +541,9 @@ function main() {
   createFile(path.join(projectPath, 'src/services/user.service.ts'), createUserService());
   createFile(path.join(projectPath, 'src/controllers/user.controller.ts'), createUserController());
   createFile(path.join(projectPath, 'src/routes/user.routes.ts'), createUserRoutes());
+
+  // Copy Artisan CLI files
+  copyArtisanFiles(projectPath);
 
   log('\n✅ Project created successfully!', 'green');
   log('\n📋 Next steps:', 'blue');
