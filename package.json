@@ -1,13 +1,20 @@
 {
-  "name": "authsystem",
+  "name": "nodemantra-core",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A powerful and versatile Node.js framework for building robust web applications with TypeScript, featuring modular architecture, middleware system, database integration, and built-in search capabilities.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "start": "NODE_ENV=production node  dist/index.js",
     "stage": "NODE_ENV=stage node dist/index.js",
     "dev": "NODE_ENV=development nodemon src/index.ts",
     "build": "NODE_ENV=production tsc -p .",
+    "prepublishOnly": "npm run build",
     "test": "mocha --require ts-node/register 'src/tests/**/*.test.ts'",
     "artisan": "ts-node ./.node_mantra/sdk/artisan.ts",
     "migration:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -d ./src/database/AppDataSource.ts",
@@ -16,8 +23,36 @@
     "seeder": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm-seeding seed -d ./src/config/database.ts ./src/database/seeders/*.ts",
     "start:socket": "NODE_ENV=development nodemon src/websocket.ts"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "framework",
+    "web-application",
+    "api",
+    "middleware",
+    "database",
+    "orm",
+    "search",
+    "meilisearch",
+    "authentication",
+    "validation",
+    "modular",
+    "scalable"
+  ],
+  "author": "Prakash Joshi <developer.prakashjoshi@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/developerprakashjoshi/NodeMantra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/developerprakashjoshi/NodeMantra/issues"
+  },
+  "homepage": "https://github.com/developerprakashjoshi/NodeMantra#readme",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.369.0",
     "@types/express": "^4.17.17",
