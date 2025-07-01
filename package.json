@@ -109,7 +109,7 @@
     "@types/chai": "^4.3.5",
     "@types/connect-pg-simple": "^7.0.0",
     "@types/cors": "^2.8.13",
-    "@types/ejs": "^3.1.2",
+    "@types/ejs": "^3.1.5",
     "@types/express-session": "^1.17.7",
     "@types/joi": "^17.2.3",
     "@types/mocha": "^10.0.1",
