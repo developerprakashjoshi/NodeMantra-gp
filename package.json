@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "create-nodemantra": "./bin/create-nodemantra.js",
-    "nodemantra": "./.node_mantra/sdk/artisan.ts"
+    "create-nodemantra": "bin/create-nodemantra.js",
+    "nodemantra": ".node_mantra/sdk/artisan.ts"
   },
   "files": [
     "dist/**/*",
@@ -23,10 +23,10 @@
     "prepublishOnly": "npm run build",
     "test": "mocha --require ts-node/register 'src/tests/**/*.test.ts'",
     "artisan": "ts-node ./.node_mantra/sdk/artisan.ts",
-    "migration:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -d ./src/database/AppDataSource.ts",
-    "migration:up": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run -d ./src/database/AppDataSource.ts",
-    "migration:down": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert -d ./src/database/AppDataSource.ts",
-    "seeder": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm-seeding seed -d ./src/config/database.ts ./src/database/seeders/*.ts",
+    "migration:generate": "ts-node ./node_modules/.bin/typeorm migration:generate -d ./src/database/AppDataSource.ts",
+    "migration:up": "ts-node ./node_modules/.bin/typeorm migration:run -d ./src/database/AppDataSource.ts",
+    "migration:down": "ts-node ./node_modules/.bin/typeorm migration:revert -d ./src/database/AppDataSource.ts",
+    "seeder": "ts-node ./node_modules/.bin/typeorm-seeding seed -d ./src/config/database.ts ./src/database/seeders/*.ts",
     "start:socket": "NODE_ENV=development nodemon src/websocket.ts"
   },
   "keywords": [
@@ -49,7 +49,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/developerprakashjoshi/nodemantra-core.git"
+    "url": "git+https://github.com/developerprakashjoshi/nodemantra-core.git"
   },
   "bugs": {
     "url": "https://github.com/developerprakashjoshi/nodemantra-core/issues"
