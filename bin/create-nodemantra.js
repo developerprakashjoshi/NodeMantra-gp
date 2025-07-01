@@ -160,14 +160,31 @@ bootstrap();
 `;
 }
 
-function createUserModel() {
-  return `import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+function createBaseModel() {
+  return `import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('users')
-export class User {
+@Entity()
+export class BaseModel {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}
+
+export default BaseModel;
+`;
+}
+
+function createUserModel() {
+  return `import { Entity, Column } from 'typeorm';
+import { BaseModel } from './base.model';
+
+@Entity('users')
+export class User extends BaseModel {
   @Column()
   name: string;
 
@@ -176,132 +193,47 @@ export class User {
 
   @Column()
   password: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }
 `;
 }
 
 function createUserService() {
-  return `import { Service } from 'nodemantra-core';
+  return `import { BaseService } from 'nodemantra-core';
 import { AppDataSource } from 'nodemantra-core';
 import { User } from '../models/user.model';
 
-export class UserService extends Service {
-  private userRepository = AppDataSource.getRepository(User);
-
-  async findAll() {
-    return await this.userRepository.find();
-  }
-
-  async findById(id: number) {
-    return await this.userRepository.findOne({ where: { id } });
-  }
-
-  async create(userData: Partial<User>) {
-    const user = this.userRepository.create(userData);
-    return await this.userRepository.save(user);
-  }
-
-  async update(id: number, userData: Partial<User>) {
-    await this.userRepository.update(id, userData);
-    return await this.findById(id);
-  }
-
-  async delete(id: number) {
-    return await this.userRepository.delete(id);
+export class UserService extends BaseService {
+  constructor() {
+    const userRepository = AppDataSource.getRepository(User);
+    super(userRepository);
   }
 }
 `;
 }
 
 function createUserController() {
-  return `import { Controller } from 'nodemantra-core';
-import { Response } from 'nodemantra-core';
-import { Request, Response as ExpressResponse } from 'express';
+  return `import { BaseController } from 'nodemantra-core';
+import { Request, Response } from 'express';
 import { UserService } from '../services/user.service';
 
-export class UserController extends Controller {
+export class UserController extends BaseController {
   constructor(private userService: UserService) {
-    super();
-  }
-
-  async getUsers(req: Request, res: ExpressResponse) {
-    try {
-      const users = await this.userService.findAll();
-      return Response.success(res, users, 'Users retrieved successfully');
-    } catch (error) {
-      return Response.error(res, error.message);
-    }
-  }
-
-  async getUser(req: Request, res: ExpressResponse) {
-    try {
-      const id = parseInt(req.params.id);
-      const user = await this.userService.findById(id);
-      
-      if (!user) {
-        return Response.notFound(res, 'User not found');
-      }
-      
-      return Response.success(res, user, 'User retrieved successfully');
-    } catch (error) {
-      return Response.error(res, error.message);
-    }
-  }
-
-  async createUser(req: Request, res: ExpressResponse) {
-    try {
-      const user = await this.userService.create(req.body);
-      return Response.created(res, user, 'User created successfully');
-    } catch (error) {
-      return Response.error(res, error.message);
-    }
-  }
-
-  async updateUser(req: Request, res: ExpressResponse) {
-    try {
-      const id = parseInt(req.params.id);
-      const user = await this.userService.update(id, req.body);
-      return Response.success(res, user, 'User updated successfully');
-    } catch (error) {
-      return Response.error(res, error.message);
-    }
-  }
-
-  async deleteUser(req: Request, res: ExpressResponse) {
-    try {
-      const id = parseInt(req.params.id);
-      await this.userService.delete(id);
-      return Response.success(res, null, 'User deleted successfully');
-    } catch (error) {
-      return Response.error(res, error.message);
-    }
+    super(userService);
   }
 }
 `;
 }
 
 function createUserRoutes() {
-  return `import { Router } from 'express';
+  return `import { BaseRoutes } from 'nodemantra-core';
 import { UserController } from '../controllers/user.controller';
 import { UserService } from '../services/user.service';
 
-const router = Router();
 const userService = new UserService();
 const userController = new UserController(userService);
+const userRoutes = new BaseRoutes(userController);
 
-router.get('/users', userController.getUsers.bind(userController));
-router.get('/users/:id', userController.getUser.bind(userController));
-router.post('/users', userController.createUser.bind(userController));
-router.put('/users/:id', userController.updateUser.bind(userController));
-router.delete('/users/:id', userController.deleteUser.bind(userController));
-
-export default router;
+export default userRoutes.getRouter();
 `;
 }
 
@@ -534,6 +466,7 @@ function main() {
 
   // Create source files
   createFile(path.join(projectPath, 'src/index.ts'), createMainIndex());
+  createFile(path.join(projectPath, 'src/models/base.model.ts'), createBaseModel());
   createFile(path.join(projectPath, 'src/models/user.model.ts'), createUserModel());
   createFile(path.join(projectPath, 'src/services/user.service.ts'), createUserService());
   createFile(path.join(projectPath, 'src/controllers/user.controller.ts'), createUserController());

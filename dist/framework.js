@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NodeMantra = exports.Service = exports.Response = exports.Controller = exports.StorageSchema = exports.RoleSchema = exports.CategorySchema = exports.UsersResolver = exports.StorageService = exports.RoleService = exports.CategoryService = exports.UserRoutes = exports.StorageRoutes = exports.RoleRoutes = exports.CategoryRoutes = exports.uploadFile = exports.notFound = exports.errorHandler = exports.AppDataSource = void 0;
+exports.NodeMantra = exports.Service = exports.Response = exports.Controller = exports.BaseRoutes = exports.BaseModel = exports.BaseService = exports.BaseController = exports.uploadFile = exports.notFound = exports.errorHandler = exports.AppDataSource = void 0;
 // NodeMantra Core Framework Entry Point
 const database_1 = __importDefault(require("./config/database"));
 exports.AppDataSource = database_1.default;
@@ -21,31 +21,15 @@ Object.defineProperty(exports, "errorHandler", { enumerable: true, get: function
 Object.defineProperty(exports, "notFound", { enumerable: true, get: function () { return error_handler_1.notFound; } });
 const fileupload_middleware_1 = require("./app/middlewares/fileupload.middleware");
 Object.defineProperty(exports, "uploadFile", { enumerable: true, get: function () { return fileupload_middleware_1.uploadFile; } });
-// Export routes
-var category_route_1 = require("./routes/category.route");
-Object.defineProperty(exports, "CategoryRoutes", { enumerable: true, get: function () { return __importDefault(category_route_1).default; } });
-var role_route_1 = require("./routes/role.route");
-Object.defineProperty(exports, "RoleRoutes", { enumerable: true, get: function () { return __importDefault(role_route_1).default; } });
-var storage_route_1 = require("./routes/storage.route");
-Object.defineProperty(exports, "StorageRoutes", { enumerable: true, get: function () { return __importDefault(storage_route_1).default; } });
-var user_route_1 = require("./routes/user.route");
-Object.defineProperty(exports, "UserRoutes", { enumerable: true, get: function () { return __importDefault(user_route_1).default; } });
-// Export services
-var category_service_1 = require("./app/services/category.service");
-Object.defineProperty(exports, "CategoryService", { enumerable: true, get: function () { return __importDefault(category_service_1).default; } });
-var role_service_1 = require("./app/services/role.service");
-Object.defineProperty(exports, "RoleService", { enumerable: true, get: function () { return __importDefault(role_service_1).default; } });
-var storage_service_1 = require("./app/services/storage.service");
-Object.defineProperty(exports, "StorageService", { enumerable: true, get: function () { return __importDefault(storage_service_1).default; } });
-var user_service_1 = require("./app/services/user.service");
-Object.defineProperty(exports, "UsersResolver", { enumerable: true, get: function () { return user_service_1.UsersResolver; } });
-// Export models
-var category_schema_1 = require("./app/models/category.schema");
-Object.defineProperty(exports, "CategorySchema", { enumerable: true, get: function () { return __importDefault(category_schema_1).default; } });
-var role_schema_1 = require("./app/models/role.schema");
-Object.defineProperty(exports, "RoleSchema", { enumerable: true, get: function () { return __importDefault(role_schema_1).default; } });
-var storage_schema_1 = require("./app/models/storage.schema");
-Object.defineProperty(exports, "StorageSchema", { enumerable: true, get: function () { return __importDefault(storage_schema_1).default; } });
+// Export base classes
+var base_controller_1 = require("./app/controllers/base.controller");
+Object.defineProperty(exports, "BaseController", { enumerable: true, get: function () { return __importDefault(base_controller_1).default; } });
+var base_service_1 = require("./app/services/base.service");
+Object.defineProperty(exports, "BaseService", { enumerable: true, get: function () { return __importDefault(base_service_1).default; } });
+var base_model_1 = require("./app/models/base.model");
+Object.defineProperty(exports, "BaseModel", { enumerable: true, get: function () { return __importDefault(base_model_1).default; } });
+var base_routes_1 = require("./routes/base.routes");
+Object.defineProperty(exports, "BaseRoutes", { enumerable: true, get: function () { return __importDefault(base_routes_1).default; } });
 // Export libraries
 var controller_1 = require("./libs/controller");
 Object.defineProperty(exports, "Controller", { enumerable: true, get: function () { return __importDefault(controller_1).default; } });

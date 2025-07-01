@@ -8,22 +8,11 @@ export { AppDataSource };
 export { errorHandler, notFound };
 export { uploadFile };
 
-// Export routes
-export { default as CategoryRoutes } from './routes/category.route';
-export { default as RoleRoutes } from './routes/role.route';
-export { default as StorageRoutes } from './routes/storage.route';
-export { default as UserRoutes } from './routes/user.route';
-
-// Export services
-export { default as CategoryService } from './app/services/category.service';
-export { default as RoleService } from './app/services/role.service';
-export { default as StorageService } from './app/services/storage.service';
-export { UsersResolver } from './app/services/user.service';
-
-// Export models
-export { default as CategorySchema } from './app/models/category.schema';
-export { default as RoleSchema } from './app/models/role.schema';
-export { default as StorageSchema } from './app/models/storage.schema';
+// Export base classes
+export { default as BaseController } from './app/controllers/base.controller';
+export { default as BaseService } from './app/services/base.service';
+export { default as BaseModel } from './app/models/base.model';
+export { default as BaseRoutes } from './routes/base.routes';
 
 // Export libraries
 export { default as Controller } from './libs/controller';
