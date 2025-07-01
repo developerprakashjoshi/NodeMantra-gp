@@ -1,16 +1,17 @@
 {
   "name": "nodemantra-core",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A powerful and versatile Node.js framework for building robust web applications with TypeScript, featuring modular architecture, middleware system, database integration, and built-in search capabilities.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
     "create-nodemantra": "bin/create-nodemantra.js",
-    "nodemantra": ".node_mantra/sdk/artisan.ts"
+    "nodemantra": "bin/nodemantra.js"
   },
   "files": [
     "dist/**/*",
     "bin/**/*",
+    ".node_mantra/**/*",
     "README.md",
     "USAGE.md",
     "LICENSE"
