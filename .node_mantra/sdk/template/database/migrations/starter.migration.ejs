@@ -1,0 +1,89 @@
+import { MigrationInterface, QueryRunner, Table, TableIndex } from "typeorm";
+
+export class <%= className %>Migration<%= timestamp %> implements MigrationInterface {
+    name = '<%= className %>Migration<%= timestamp %>'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.createTable(
+            new Table({
+                name: "<%= classNameLowerCase %>s",
+                columns: [
+                    {
+                        name: "id",
+                        type: "int",
+                        isPrimary: true,
+                        isGenerated: true,
+                        generationStrategy: "increment",
+                    },
+                    {
+                        name: "name",
+                        type: "varchar",
+                        length: "255",
+                        isNullable: false,
+                    },
+                    {
+                        name: "email",
+                        type: "varchar",
+                        length: "255",
+                        isNullable: false,
+                        isUnique: true,
+                    },
+                    {
+                        name: "password",
+                        type: "varchar",
+                        length: "255",
+                        isNullable: false,
+                    },
+                    {
+                        name: "status",
+                        type: "enum",
+                        enum: ["active", "inactive", "pending"],
+                        default: "'active'",
+                    },
+                    {
+                        name: "created_at",
+                        type: "timestamp",
+                        default: "CURRENT_TIMESTAMP",
+                    },
+                    {
+                        name: "updated_at",
+                        type: "timestamp",
+                        default: "CURRENT_TIMESTAMP",
+                        onUpdate: "CURRENT_TIMESTAMP",
+                    },
+                ],
+            }),
+            true
+        );
+
+        // Create indexes
+        await queryRunner.createIndex(
+            "<%= classNameLowerCase %>s",
+            new TableIndex({
+                name: "IDX_<%= classNameUpperCase %>_EMAIL",
+                columnNames: ["email"],
+            })
+        );
+
+        await queryRunner.createIndex(
+            "<%= classNameLowerCase %>s",
+            new TableIndex({
+                name: "IDX_<%= classNameUpperCase %>_STATUS",
+                columnNames: ["status"],
+            })
+        );
+
+        console.log(`✅ <%= className %> migration up completed successfully!`);
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        // Drop indexes first
+        await queryRunner.dropIndex("<%= classNameLowerCase %>s", "IDX_<%= classNameUpperCase %>_EMAIL");
+        await queryRunner.dropIndex("<%= classNameLowerCase %>s", "IDX_<%= classNameUpperCase %>_STATUS");
+        
+        // Drop table
+        await queryRunner.dropTable("<%= classNameLowerCase %>s");
+        
+        console.log(`✅ <%= className %> migration down completed successfully!`);
+    }
+} 

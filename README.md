@@ -1,4 +1,5 @@
 # NodeMantra
+
 An Introduction to NodeMantra (Part I) offers a comprehensive overview of the NodeMantra framework, highlighting its powerful features.
 
 NodeMantra is a powerful and versatile framework designed for building robust web applications using Node.js and TypeScript. It provides a solid foundation and a collection of essential tools and features to streamline the development process and enhance code quality.
@@ -45,9 +46,36 @@ app.initialize().then(() => {
 });
 ```
 
+### Using Artisan Commands
+
+NodeMantra includes a powerful command-line interface inspired by Laravel's Artisan:
+
+```bash
+# List all available commands
+npm run artisan list
+
+# Create a complete resource (controller, model, service, validator, route)
+npm run artisan make:resource User
+
+# Create individual components
+npm run artisan make:controller Post
+npm run artisan make:model Category
+npm run artisan make:middleware Auth
+
+# Database operations
+npm run artisan db:migrate
+npm run artisan db:seed
+
+# Start development server
+npm run artisan serve
+```
+
+For a complete list of commands, see the [Artisan Commands documentation](ARTISAN.md).
+
 ## Documentation
 
 - 📖 [Complete Usage Guide](USAGE.md) - Detailed guide with examples
+- 🛠️ [Artisan Commands](ARTISAN.md) - Command-line interface documentation
 - 🚀 [NPM Package](https://www.npmjs.com/package/nodemantra-core)
 - 📚 [GitHub Repository](https://github.com/developerprakashjoshi/nodemantra-core)
 
@@ -61,5 +89,6 @@ app.initialize().then(() => {
 - ✅ **File Upload** - Built-in file upload middleware
 - ✅ **Search Integration** - MeiliSearch integration
 - ✅ **CLI Tool** - Quick project scaffolding
+- ✅ **Artisan Commands** - Laravel-inspired command-line interface
 
 Overall, NodeMantra is a feature-rich and developer-friendly framework that combines the power of Node.js with the benefits of TypeScript. It empowers developers to build scalable, maintainable, and high-performance web applications with ease. Whether you're building a small REST API or a complex web application, NodeMantra provides the tools and structure needed to deliver reliable and efficient solutions.# Updated Git configuration

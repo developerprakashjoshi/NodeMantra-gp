@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "create-nodemantra": "./bin/create-nodemantra.js"
+    "create-nodemantra": "./bin/create-nodemantra.js",
+    "nodemantra": "./.node_mantra/sdk/artisan.ts"
   },
   "files": [
     "dist/**/*",
@@ -128,5 +129,12 @@
     "supertest": "^6.3.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0"
+  },
+  "_moduleAliases": {
+    "@controllers": "dist/app/controllers",
+    "@services": "dist/app/services",
+    "@models": "dist/app/models",
+    "@routes": "dist/routes",
+    "@libs": "dist/libs"
   }
 }

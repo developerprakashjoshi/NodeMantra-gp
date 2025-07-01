@@ -1,0 +1,48 @@
+import { DataSource } from 'typeorm';
+import { Factory, Seeder } from '@jorgebodega/typeorm-seeding';
+import { <%= className %> } from '@models/<%= classNameLowerCase %>.schema';
+
+export default class <%= className %>Seeder implements Seeder {
+  public async run(dataSource: DataSource): Promise<void> {
+    const <%= classNameLowerCase %>Repository = dataSource.getRepository(<%= className %>);
+
+    // Check if data already exists
+    const existingCount = await <%= classNameLowerCase %>Repository.count();
+    if (existingCount > 0) {
+      console.log(`✅ <%= className %> data already exists (${existingCount} records)`);
+      return;
+    }
+
+    // Create sample data
+    const sampleData = [
+      {
+        name: 'Sample <%= className %> 1',
+        email: 'sample1@example.com',
+        // Add other fields as needed
+      },
+      {
+        name: 'Sample <%= className %> 2',
+        email: 'sample2@example.com',
+        // Add other fields as needed
+      },
+      {
+        name: 'Sample <%= className %> 3',
+        email: 'sample3@example.com',
+        // Add other fields as needed
+      }
+    ];
+
+    try {
+      // Insert sample data
+      for (const data of sampleData) {
+        const <%= classNameLowerCase %> = <%= classNameLowerCase %>Repository.create(data);
+        await <%= classNameLowerCase %>Repository.save(<%= classNameLowerCase %>);
+      }
+
+      console.log(`✅ <%= className %> seeder completed successfully! Created ${sampleData.length} records.`);
+    } catch (error) {
+      console.error(`❌ Error in <%= className %> seeder:`, error);
+      throw error;
+    }
+  }
+} 

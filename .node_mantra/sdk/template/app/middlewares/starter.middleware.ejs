@@ -1,0 +1,32 @@
+import { Request, Response, NextFunction } from 'express';
+
+export default class <%= className %>Middleware {
+  static async handle(req: Request, res: Response, next: NextFunction) {
+    try {
+      // Add your middleware logic here
+      // Example: Authentication, validation, logging, etc.
+      
+      // Continue to the next middleware or route handler
+      next();
+    } catch (error) {
+      // Handle any errors
+      console.error('<%= className %>Middleware error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+        error: error.message
+      });
+    }
+  }
+
+  // Optional: Add more middleware methods if needed
+  static async before(req: Request, res: Response, next: NextFunction) {
+    // Logic to run before the main request
+    next();
+  }
+
+  static async after(req: Request, res: Response, next: NextFunction) {
+    // Logic to run after the main request
+    next();
+  }
+} 

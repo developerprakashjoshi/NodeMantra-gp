@@ -1,0 +1,99 @@
+import { expect } from 'chai';
+import request from 'supertest';
+import { app } from '../../src/index';
+
+describe('<%= className %> Tests', () => {
+  describe('GET /api/v1/<%= classNameLowerCase %>s', () => {
+    it('should return all <%= classNameLowerCase %>s', async () => {
+      const response = await request(app)
+        .get('/api/v1/<%= classNameLowerCase %>s')
+        .expect(200);
+
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.be.true;
+    });
+  });
+
+  describe('GET /api/v1/<%= classNameLowerCase %>s/:id', () => {
+    it('should return a specific <%= classNameLowerCase %>', async () => {
+      const response = await request(app)
+        .get('/api/v1/<%= classNameLowerCase %>s/1')
+        .expect(200);
+
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.be.true;
+    });
+
+    it('should return 404 for non-existent <%= classNameLowerCase %>', async () => {
+      await request(app)
+        .get('/api/v1/<%= classNameLowerCase %>s/999999')
+        .expect(404);
+    });
+  });
+
+  describe('POST /api/v1/<%= classNameLowerCase %>s', () => {
+    it('should create a new <%= classNameLowerCase %>', async () => {
+      const <%= classNameLowerCase %>Data = {
+        name: 'Test <%= className %>',
+        email: 'test@example.com'
+      };
+
+      const response = await request(app)
+        .post('/api/v1/<%= classNameLowerCase %>s')
+        .send(<%= classNameLowerCase %>Data)
+        .expect(201);
+
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.be.true;
+    });
+
+    it('should return 400 for invalid data', async () => {
+      const invalidData = {
+        name: '' // Invalid: empty name
+      };
+
+      await request(app)
+        .post('/api/v1/<%= classNameLowerCase %>s')
+        .send(invalidData)
+        .expect(400);
+    });
+  });
+
+  describe('PUT /api/v1/<%= classNameLowerCase %>s/:id', () => {
+    it('should update an existing <%= classNameLowerCase %>', async () => {
+      const updateData = {
+        name: 'Updated <%= className %>'
+      };
+
+      const response = await request(app)
+        .put('/api/v1/<%= classNameLowerCase %>s/1')
+        .send(updateData)
+        .expect(200);
+
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.be.true;
+    });
+  });
+
+  describe('DELETE /api/v1/<%= classNameLowerCase %>s/:id', () => {
+    it('should delete an existing <%= classNameLowerCase %>', async () => {
+      const response = await request(app)
+        .delete('/api/v1/<%= classNameLowerCase %>s/1')
+        .expect(200);
+
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.be.true;
+    });
+  });
+
+  describe('GET /api/v1/<%= classNameLowerCase %>s/search', () => {
+    it('should search <%= classNameLowerCase %>s', async () => {
+      const response = await request(app)
+        .get('/api/v1/<%= classNameLowerCase %>s/search?q=test')
+        .expect(200);
+
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.be.true;
+    });
+  });
+}); 
