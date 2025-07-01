@@ -13,7 +13,8 @@
     "migration:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -d ./src/database/AppDataSource.ts",
     "migration:up": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run -d ./src/database/AppDataSource.ts",
     "migration:down": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert -d ./src/database/AppDataSource.ts",
-    "seeder": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm-seeding seed -d ./src/config/database.ts ./src/database/seeders/*.ts"
+    "seeder": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm-seeding seed -d ./src/config/database.ts ./src/database/seeders/*.ts",
+    "start:socket": "NODE_ENV=development nodemon src/websocket.ts"
   },
   "author": "",
   "license": "ISC",
@@ -38,6 +39,7 @@
     "graphql": "^15.8.0",
     "joi": "^17.9.1",
     "jsonwebtoken": "^9.0.0",
+    "kafkajs": "^2.2.4",
     "meilisearch": "^0.33.0",
     "module-alias": "^2.2.3",
     "moment": "^2.29.4",
@@ -52,6 +54,7 @@
     "pg": "^8.10.0",
     "razorpay": "^2.8.6",
     "reflect-metadata": "^0.1.13",
+    "socket.io": "^4.7.5",
     "stripe": "^12.2.0",
     "type-graphql": "^1.1.1",
     "typeorm": "^0.3.15",
