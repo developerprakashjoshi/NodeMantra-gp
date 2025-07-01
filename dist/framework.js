@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NodeMantra = exports.Service = exports.Response = exports.Controller = exports.BaseRoutes = exports.BaseModel = exports.BaseService = exports.BaseController = exports.uploadFile = exports.notFound = exports.errorHandler = exports.AppDataSource = void 0;
+exports.NodeMantra = exports.Service = exports.Response = exports.MeiliSearch = exports.Controller = exports.BaseRoutes = exports.BaseModel = exports.BaseService = exports.BaseController = exports.uploadFile = exports.notFound = exports.errorHandler = exports.AppDataSource = void 0;
 // NodeMantra Core Framework Entry Point
 const database_1 = __importDefault(require("./config/database"));
 exports.AppDataSource = database_1.default;
@@ -22,20 +22,22 @@ Object.defineProperty(exports, "notFound", { enumerable: true, get: function () 
 const fileupload_middleware_1 = require("./app/middlewares/fileupload.middleware");
 Object.defineProperty(exports, "uploadFile", { enumerable: true, get: function () { return fileupload_middleware_1.uploadFile; } });
 // Export base classes
-var base_controller_1 = require("./app/controllers/base.controller");
+var base_controller_1 = require("@controllers/base.controller");
 Object.defineProperty(exports, "BaseController", { enumerable: true, get: function () { return __importDefault(base_controller_1).default; } });
-var base_service_1 = require("./app/services/base.service");
+var base_service_1 = require("@services/base.service");
 Object.defineProperty(exports, "BaseService", { enumerable: true, get: function () { return __importDefault(base_service_1).default; } });
-var base_model_1 = require("./app/models/base.model");
+var base_model_1 = require("@models/base.model");
 Object.defineProperty(exports, "BaseModel", { enumerable: true, get: function () { return __importDefault(base_model_1).default; } });
-var base_routes_1 = require("./routes/base.routes");
+var base_routes_1 = require("@routes/base.routes");
 Object.defineProperty(exports, "BaseRoutes", { enumerable: true, get: function () { return __importDefault(base_routes_1).default; } });
 // Export libraries
-var controller_1 = require("./libs/controller");
+var controller_1 = require("@libs/controller");
 Object.defineProperty(exports, "Controller", { enumerable: true, get: function () { return __importDefault(controller_1).default; } });
-var response_1 = require("./libs/response");
+var meili_search_1 = require("@libs/meili.search");
+Object.defineProperty(exports, "MeiliSearch", { enumerable: true, get: function () { return __importDefault(meili_search_1).default; } });
+var response_1 = require("@libs/response");
 Object.defineProperty(exports, "Response", { enumerable: true, get: function () { return __importDefault(response_1).default; } });
-var service_1 = require("./libs/service");
+var service_1 = require("@libs/service");
 Object.defineProperty(exports, "Service", { enumerable: true, get: function () { return __importDefault(service_1).default; } });
 // Framework Class
 class NodeMantra {

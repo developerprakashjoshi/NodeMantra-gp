@@ -9,15 +9,16 @@ export { errorHandler, notFound };
 export { uploadFile };
 
 // Export base classes
-export { default as BaseController } from './app/controllers/base.controller';
-export { default as BaseService } from './app/services/base.service';
-export { default as BaseModel } from './app/models/base.model';
-export { default as BaseRoutes } from './routes/base.routes';
+export { default as BaseController } from '@controllers/base.controller';
+export { default as BaseService } from '@services/base.service';
+export { default as BaseModel } from '@models/base.model';
+export { default as BaseRoutes } from '@routes/base.routes';
 
 // Export libraries
-export { default as Controller } from './libs/controller';
-export { default as Response } from './libs/response';
-export { default as Service } from './libs/service';
+export { default as Controller } from '@libs/controller';
+export { default as MeiliSearch } from '@libs/meili.search';
+export { default as Response } from '@libs/response';
+export { default as Service } from '@libs/service';
 
 // Framework Class
 export class NodeMantra {

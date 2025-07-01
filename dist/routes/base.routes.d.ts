@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { BaseController } from '../app/controllers/base.controller';
+import { BaseController } from '@controllers/base.controller';
 export declare class BaseRoutes {
     protected router: Router;
     protected controller: BaseController;

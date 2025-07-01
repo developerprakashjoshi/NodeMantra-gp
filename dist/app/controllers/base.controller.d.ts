@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Controller from '../../libs/controller';
+import Controller from '@libs/controller';
 export declare class BaseController extends Controller {
     protected service: any;
     constructor(service: any);

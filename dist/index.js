@@ -18,6 +18,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
+require("module-alias/register");
 require("./module-alias");
 require("reflect-metadata");
 const dotenv_1 = __importDefault(require("dotenv"));

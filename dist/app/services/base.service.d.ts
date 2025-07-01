@@ -1,4 +1,4 @@
-import Service from '../../libs/service';
+import Service from '@libs/service';
 export declare class BaseService extends Service {
     protected repository: any;
     constructor(repository: any);

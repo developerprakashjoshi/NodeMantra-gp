@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import Controller from '../../libs/controller';
-import ResponseHelper from '../../libs/response';
+import Controller from '@libs/controller';
+import ResponseHelper from '@libs/response';
 
 export class BaseController extends Controller {
   protected service: any;
