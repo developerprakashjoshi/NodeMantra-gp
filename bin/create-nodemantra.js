@@ -462,24 +462,24 @@ function copyArtisanFiles(projectPath) {
   createDirectory(path.join(artisanDir, 'util'));
 
   // Copy artisan.ts
-  const artisanContent = fs.readFileSync('./.node_mantra/sdk/artisan.ts', 'utf8');
+  const artisanContent = fs.readFileSync(path.join(__dirname, '../.node_mantra/sdk/artisan.ts'), 'utf8');
   createFile(path.join(artisanDir, 'artisan.ts'), artisanContent);
 
   // Copy String.ts utility
-  const stringUtilContent = fs.readFileSync('./.node_mantra/sdk/util/String.ts', 'utf8');
+  const stringUtilContent = fs.readFileSync(path.join(__dirname, '../.node_mantra/sdk/util/String.ts'), 'utf8');
   createFile(path.join(artisanDir, 'util', 'String.ts'), stringUtilContent);
 
   // Copy template files
   const templateFiles = [
-    { src: './.node_mantra/sdk/template/app/controllers/starter.controller.ejs', dest: 'template/app/controllers/starter.controller.ejs' },
-    { src: './.node_mantra/sdk/template/app/models/starter.schema.ejs', dest: 'template/app/models/starter.schema.ejs' },
-    { src: './.node_mantra/sdk/template/app/services/starter.service.ejs', dest: 'template/app/services/starter.service.ejs' },
-    { src: './.node_mantra/sdk/template/app/validators/starter.validator.ejs', dest: 'template/app/validators/starter.validator.ejs' },
-    { src: './.node_mantra/sdk/template/routes/starter.route.ejs', dest: 'template/routes/starter.route.ejs' },
-    { src: './.node_mantra/sdk/template/app/middlewares/starter.middleware.ejs', dest: 'template/app/middlewares/starter.middleware.ejs' },
-    { src: './.node_mantra/sdk/template/tests/starter.test.ejs', dest: 'template/tests/starter.test.ejs' },
-    { src: './.node_mantra/sdk/template/database/seeders/starter.seeder.ejs', dest: 'template/database/seeders/starter.seeder.ejs' },
-    { src: './.node_mantra/sdk/template/database/migrations/starter.migration.ejs', dest: 'template/database/migrations/starter.migration.ejs' }
+    { src: path.join(__dirname, '../.node_mantra/sdk/template/app/controllers/starter.controller.ejs'), dest: 'template/app/controllers/starter.controller.ejs' },
+    { src: path.join(__dirname, '../.node_mantra/sdk/template/app/models/starter.schema.ejs'), dest: 'template/app/models/starter.schema.ejs' },
+    { src: path.join(__dirname, '../.node_mantra/sdk/template/app/services/starter.service.ejs'), dest: 'template/app/services/starter.service.ejs' },
+    { src: path.join(__dirname, '../.node_mantra/sdk/template/app/validators/starter.validator.ejs'), dest: 'template/app/validators/starter.validator.ejs' },
+    { src: path.join(__dirname, '../.node_mantra/sdk/template/routes/starter.route.ejs'), dest: 'template/routes/starter.route.ejs' },
+    { src: path.join(__dirname, '../.node_mantra/sdk/template/app/middlewares/starter.middleware.ejs'), dest: 'template/app/middlewares/starter.middleware.ejs' },
+    { src: path.join(__dirname, '../.node_mantra/sdk/template/tests/starter.test.ejs'), dest: 'template/tests/starter.test.ejs' },
+    { src: path.join(__dirname, '../.node_mantra/sdk/template/database/seeders/starter.seeder.ejs'), dest: 'template/database/seeders/starter.seeder.ejs' },
+    { src: path.join(__dirname, '../.node_mantra/sdk/template/database/migrations/starter.migration.ejs'), dest: 'template/database/migrations/starter.migration.ejs' }
   ];
 
   templateFiles.forEach(file => {
